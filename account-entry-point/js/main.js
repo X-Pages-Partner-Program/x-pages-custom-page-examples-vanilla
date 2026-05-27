@@ -39,18 +39,21 @@ document.addEventListener('DOMContentLoaded', function () {
   Promise.all([
     ds.getDataForCurrentObject('account__v', 'id'),
     ds.getDataForCurrentObject('account__v', 'name__v'),
-    ds.getDataForCurrentObject('user__sys', 'name__v')
+    ds.getDataForCurrentObject('user__sys', 'name__v'),
+    ds.getObjectMetadata('call2__v')    // temporary — inspecting available fields
   ])
   .then(function (responses) {
 
     var accountIdResponse   = responses[0];
     var accountNameResponse = responses[1];
     var userNameResponse    = responses[2];
+    var call2MetaResponse   = responses[3];
 
     // Log the full raw responses to the console for inspection
     console.log('[Account Entry Point] Raw response - account__v id:', accountIdResponse);
     console.log('[Account Entry Point] Raw response - account__v name__v:', accountNameResponse);
     console.log('[Account Entry Point] Raw response - user__sys name__v:', userNameResponse);
+    console.log('[Account Entry Point] Raw response - getObjectMetadata call2__v:', call2MetaResponse);
 
     // Extract values from the confirmed response shape
     var accountId   = accountIdResponse.account__v.id;
