@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
     ds.getDataForCurrentObject('account__v', 'id'),
     ds.getDataForCurrentObject('account__v', 'name__v'),
     ds.getDataForCurrentObject('user__sys', 'name__v'),
-    ds.getObjectMetadata('call2__v')    // temporary — inspecting available fields
+    ds.getObjectMetadata({ object: 'call2__v' })    // temporary — inspecting available fields
   ])
   .then(function (responses) {
 
