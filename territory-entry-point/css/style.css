@@ -89,6 +89,12 @@ h1 {
   max-width: 600px;
 }
 
+/* Inline error on a single data row */
+.error-inline {
+  color: #c0392b;
+  font-style: italic;
+}
+
 /* Error state */
 .error {
   color: #c0392b;
