@@ -5,6 +5,11 @@
  * data from the Vault CRM context. All three calls are made in parallel
  * using Promise.all().
  *
+ * Response shape: each call returns an object keyed by the object name,
+ * containing the requested field as a property. For example:
+ *   ds.getDataForCurrentObject('account__v', 'id')
+ *   → { account__v: { id: '...' } }
+ *
  * NOTE: These calls only work when deployed inside Vault CRM. Running this
  * file locally will produce errors from the X-Pages library, which is expected.
  */
@@ -21,20 +26,25 @@ document.addEventListener('DOMContentLoaded', function () {
   ])
   .then(function (responses) {
 
-    var accountId   = responses[0];
-    var accountName = responses[1];
-    var userName    = responses[2];
+    var accountIdResponse   = responses[0];
+    var accountNameResponse = responses[1];
+    var userNameResponse    = responses[2];
 
     // Log the full raw responses to the console for inspection
-    console.log('[Account Entry Point] Raw response - account__v id:', accountId);
-    console.log('[Account Entry Point] Raw response - account__v name__v:', accountName);
-    console.log('[Account Entry Point] Raw response - user__sys name__v:', userName);
+    console.log('[Account Entry Point] Raw response - account__v id:', accountIdResponse);
+    console.log('[Account Entry Point] Raw response - account__v name__v:', accountNameResponse);
+    console.log('[Account Entry Point] Raw response - user__sys name__v:', userNameResponse);
+
+    // Extract values from the confirmed response shape
+    var accountId   = accountIdResponse.account__v.id;
+    var accountName = accountNameResponse.account__v.name__v;
+    var userName    = userNameResponse.user__sys.name__v;
 
     // Render results to the page
     resultsEl.innerHTML =
-      renderRow('Account ID',   formatValue(accountId))   +
-      renderRow('Account Name', formatValue(accountName)) +
-      renderRow('Current User', formatValue(userName));
+      renderRow('Account ID',   accountId)   +
+      renderRow('Account Name', accountName) +
+      renderRow('Current User', userName);
 
   })
   .catch(function (error) {
@@ -62,23 +72,7 @@ function renderRow(label, value) {
   return (
     '<div class="data-row">' +
       '<span class="data-label">' + label + '</span>' +
-      '<span class="data-value">' + value + '</span>' +
+      '<span class="data-value">' + (value != null ? value : '(no value)') + '</span>' +
     '</div>'
   );
-}
-
-/**
- * Extracts a display value from a raw ds response.
- * Handles both plain values and response objects gracefully.
- * @param {*} response
- * @returns {string}
- */
-function formatValue(response) {
-  if (response === null || response === undefined) {
-    return '(no value)';
-  }
-  if (typeof response === 'object') {
-    return JSON.stringify(response);
-  }
-  return String(response);
 }
