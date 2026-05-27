@@ -77,6 +77,88 @@ h1 {
   word-break: break-all;
 }
 
+/* Platform badge — fixed top-right pill */
+.platform-badge {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.platform-badge--ipad {
+  background: #1a6fc4;
+}
+
+.platform-badge--windows {
+  background: #2d7d46;
+}
+
+.platform-badge--browser {
+  background: #888;
+}
+
+/* Recent calls section */
+.section-heading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 28px 0 12px;
+  color: #333;
+}
+
+#calls {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  max-width: 600px;
+}
+
+/* Individual call rows */
+.call-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.call-row:first-child {
+  padding-top: 0;
+}
+
+.call-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.call-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 120px;
+  flex: 1;
+}
+
+/* ID field is narrower — it's long but less prominent */
+.call-field--id {
+  flex: 2;
+}
+
+.no-value {
+  color: #bbb;
+}
+
+.no-results {
+  color: #888;
+  font-style: italic;
+  margin: 0;
+}
+
 /* Error state */
 .error {
   color: #c0392b;
