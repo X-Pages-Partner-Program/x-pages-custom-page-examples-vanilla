@@ -82,12 +82,14 @@ document.addEventListener('DOMContentLoaded', function () {
       // Verify this shape in the console when testing in Vault CRM.
       console.log('[Account Entry Point] Raw response - queryRecord call2__v:', callsResponse);
 
-      if (!callsResponse || callsResponse.length === 0) {
+      var records = callsResponse.call2__v;
+
+      if (!records || records.length === 0) {
         callsEl.innerHTML = '<p class="no-results">No recent calls found for this account.</p>';
         return;
       }
 
-      callsEl.innerHTML = callsResponse.map(function (call) {
+      callsEl.innerHTML = records.map(function (call) {
         return renderCallRow(call);
       }).join('');
 
