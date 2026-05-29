@@ -63,38 +63,26 @@ document.addEventListener('DOMContentLoaded', function () {
       renderRow('Account Name', accountName) +
       renderRow('Current User', userName);
 
-    // Step 2: Query recent calls for this account, sorted by date descending.
-    // This is chained after step 1 because the WHERE clause depends on
-    // the account ID retrieved above.
-    //
-    // WHERE clause note: simple equality syntax works across Browser and iPad.
-    // More complex syntax may differ by platform — see X-Pages CLAUDE.md.
-    ds.queryRecord({
-      object: 'call2__v',
-      fields: ['id', 'name__v', 'call_date__v', 'status__v'],
-      where:  'account__v = \'' + accountId + '\'',
-      sort:   ['call_date__v DESC'],
-      limit:  10
-    })
-    .then(function (callsResponse) {
+    // Step 2 (temporary): Call getAvailableObjects to inspect what objects are
+    // accessible in this Vault CRM context. Logged and rendered for debugging.
+    ds.getAvailableObjects()
+    .then(function (objectsResponse) {
 
-      // Log the full raw response before extracting any values.
-      // Verify this shape in the console when testing in Vault CRM.
-      console.log('[Account Entry Point] Raw response - queryRecord call2__v:', callsResponse);
+      console.log('[Account Entry Point] Raw response - getAvailableObjects:', objectsResponse);
 
-      if (!callsResponse || callsResponse.length === 0) {
-        callsEl.innerHTML = '<p class="no-results">No recent calls found for this account.</p>';
+      if (!objectsResponse || objectsResponse.length === 0) {
+        callsEl.innerHTML = '<p class="no-results">No objects returned.</p>';
         return;
       }
 
-      callsEl.innerHTML = callsResponse.map(function (call) {
-        return renderCallRow(call);
+      callsEl.innerHTML = objectsResponse.map(function (obj) {
+        return '<p class="data-value">' + obj + '</p>';
       }).join('');
 
     })
     .catch(function (error) {
-      console.error('[Account Entry Point] Error fetching calls:', error);
-      callsEl.innerHTML = '<p class="error">Error fetching calls. Check the console for details.</p>';
+      console.error('[Account Entry Point] Error fetching available objects:', error);
+      callsEl.innerHTML = '<p class="error">Error fetching available objects. Check the console for details.</p>';
     });
 
   })
