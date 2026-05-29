@@ -73,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
       object: 'call2__v',
       fields: ['id', 'name__v', 'call_date__v', 'status_vod__v'],
       where:  'account__v = \'' + accountId + '\'',
-      sort:   ['call_date__v DESC'],
       limit:  10
     })
     .then(function (callsResponse) {
