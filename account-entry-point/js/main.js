@@ -7,9 +7,8 @@
  *      user context. These values are provided by the Vault CRM runtime and do
  *      not require a query.
  *
- *   2. queryRecord — queries call2__v records for the current account. The
- *      account ID retrieved in step 1 is used as the WHERE clause value, so
- *      queryRecord is chained after getDataForCurrentObject resolves.
+ *   2. queryRecord — queries call2__v records with no WHERE clause, returning
+ *      all records up to the limit.
  *
  * Response shape for getDataForCurrentObject:
  *   Each call returns an object keyed by the object name, e.g.:
@@ -63,16 +62,10 @@ document.addEventListener('DOMContentLoaded', function () {
       renderRow('Account Name', accountName) +
       renderRow('Current User', userName);
 
-    // Step 2: Query recent calls for this account.
-    // This is chained after step 1 because the WHERE clause depends on
-    // the account ID retrieved above.
-    //
-    // WHERE clause note: simple equality syntax works across Browser and iPad.
-    // More complex syntax may differ by platform — see X-Pages CLAUDE.md.
+    // Step 2: Query recent calls — no WHERE clause, returns all records up to the limit.
     ds.queryRecord({
       object: 'call2__v',
       fields: ['id', 'name__v', 'call_date__v', 'status_vod__v'],
-      where:  'account__v = \'' + accountId + '\'',
       limit:  10
     })
     .then(function (callsResponse) {
