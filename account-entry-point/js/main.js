@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.0';
+  var VERSION = '1.0.1';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -68,6 +68,27 @@ document.addEventListener('DOMContentLoaded', function () {
       config: {
         object: 'html_report__v',
         fields: { external_id__v: 'Territory Entry Point - Test' }
+      }
+    },
+    {
+      label:  'Go to Territory (VCR000000003005)',
+      config: {
+        object: 'territory__v',
+        fields: { id: 'VCR000000003005' }
+      }
+    },
+    {
+      label:  'Go to Territory (VCR000000003011)',
+      config: {
+        object: 'territory__v',
+        fields: { id: 'VCR000000003011' }
+      }
+    },
+    {
+      label:  'Go to Territory (VCR000000001001)',
+      config: {
+        object: 'territory__v',
+        fields: { id: 'VCR000000001001' }
       }
     }
   ];
