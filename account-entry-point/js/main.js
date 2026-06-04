@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.4';
+  var VERSION = '1.0.5';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -145,6 +145,22 @@ document.addEventListener('DOMContentLoaded', function () {
         return renderCallRow(call);
       }).join('');
 
+      // Attach click handlers to each ID link after the rows are in the DOM.
+      // Clicking navigates to that call record via ds.viewRecord.
+      callsEl.querySelectorAll('.call-id-link').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var callId = el.getAttribute('data-call-id');
+          console.log('[Account Entry Point] Navigating to call:', callId);
+          ds.viewRecord({ object: 'call2__v', fields: { id: callId } })
+            .then(function (response) {
+              console.log('[Account Entry Point] viewRecord call2__v resolved:', response);
+            })
+            .catch(function (error) {
+              console.log('[Account Entry Point] viewRecord call2__v rejected:', error);
+            });
+        });
+      });
+
     })
     .catch(function (error) {
       console.error('[Account Entry Point] Error fetching calls:', error);
@@ -206,7 +222,7 @@ function renderCallRow(call) {
       '<div class="call-field"><span class="data-label">Name</span><span class="data-value">'        + safeValue(call.name__v)        + '</span></div>' +
       '<div class="call-field"><span class="data-label">Date</span><span class="data-value">'        + safeValue(call.call_date__v)   + '</span></div>' +
       '<div class="call-field"><span class="data-label">Status</span><span class="data-value">'      + safeValue(call.status__v)      + '</span></div>' +
-      '<div class="call-field call-field--id"><span class="data-label">ID</span><span class="data-value">' + safeValue(call.id) + '</span></div>' +
+      '<div class="call-field call-field--id"><span class="data-label">ID</span><span class="data-value call-id-link" data-call-id="' + safeValue(call.id) + '">' + safeValue(call.id) + '</span></div>' +
     '</div>'
   );
 }

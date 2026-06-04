@@ -195,6 +195,17 @@ h1 {
   letter-spacing: 0.05em;
 }
 
+/* Clickable call ID link in call rows */
+.call-id-link {
+  cursor: pointer;
+  color: #1a6fc4;
+  text-decoration: underline;
+}
+
+.call-id-link:hover {
+  color: #155a9e;
+}
+
 /* Error state */
 .error {
   color: #c0392b;
