@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.3';
+  var VERSION = '1.0.4';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -103,6 +103,24 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('[Territory Entry Point] Navigation — ' + buttons[index].label + ' rejected:', error);
         });
     });
+  });
+
+  // viewSection switches to a different tab within the current page context.
+  // It takes a section ID directly rather than a record config object, so it
+  // is wired up separately from the viewRecord buttons above.
+  var viewSectionBtn = document.createElement('button');
+  viewSectionBtn.className = 'nav-button';
+  viewSectionBtn.textContent = 'Switch Tab to OOTB Page';
+  navigationEl.querySelector('.nav-actions').appendChild(viewSectionBtn);
+
+  viewSectionBtn.addEventListener('click', function () {
+    ds.viewSection({ id: 'V8P000000004001' })
+      .then(function (response) {
+        console.log('[Territory Entry Point] Navigation — Switch Tab to OOTB Page resolved:', response);
+      })
+      .catch(function (error) {
+        console.log('[Territory Entry Point] Navigation — Switch Tab to OOTB Page rejected:', error);
+      });
   });
 
   // Each data call is fired independently so its resolve/reject lifecycle is
