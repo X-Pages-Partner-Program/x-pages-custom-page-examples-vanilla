@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.2';
+  var VERSION = '1.0.3';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -117,6 +117,24 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('[Account Entry Point] Navigation — ' + navButtons[index].label + ' rejected:', error);
         });
     });
+  });
+
+  // viewSection switches to a different tab within the current page context.
+  // It takes a section ID directly rather than a record config object, so it
+  // is wired up separately from the viewRecord buttons above.
+  var viewSectionBtn = document.createElement('button');
+  viewSectionBtn.className = 'nav-button';
+  viewSectionBtn.textContent = 'Switch Tab to HCP OOTB';
+  navigationEl.querySelector('.nav-actions').appendChild(viewSectionBtn);
+
+  viewSectionBtn.addEventListener('click', function () {
+    ds.viewSection({ id: 'V8P000000001001' })
+      .then(function (response) {
+        console.log('[Account Entry Point] Navigation — Switch Tab to HCP OOTB resolved:', response);
+      })
+      .catch(function (error) {
+        console.log('[Account Entry Point] Navigation — Switch Tab to HCP OOTB rejected:', error);
+      });
   });
 
   // Step 1: Fetch context data in parallel.
