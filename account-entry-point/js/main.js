@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.5';
+  var VERSION = '1.0.6';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -183,6 +183,18 @@ document.addEventListener('DOMContentLoaded', function () {
     callsEl.innerHTML = '<p class="error">Calls unavailable — account ID could not be retrieved.</p>';
 
   });
+
+  console.log('[Account Entry Point] Firing: getAvailableObjects');
+  ds.getAvailableObjects()
+    .then(function (response) {
+      console.log('[Account Entry Point] Resolved: getAvailableObjects', response);
+      resultsEl.innerHTML += renderRow('getAvailableObjects', '✓ success — see console for full response');
+    })
+    .catch(function (error) {
+      console.log('[Account Entry Point] Rejected: getAvailableObjects', error);
+      var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
+      resultsEl.innerHTML += renderRow('getAvailableObjects', 'Error: ' + errorMessage);
+    });
 
 });
 
