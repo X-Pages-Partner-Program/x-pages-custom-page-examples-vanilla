@@ -26,11 +26,74 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  var VERSION = '1.0.0';
+  var versionEl = document.createElement('div');
+  versionEl.className = 'version-stamp';
+  versionEl.textContent = 'v' + VERSION;
+  document.body.appendChild(versionEl);
+
   // Render the platform badge immediately — this is independent of any data calls
   renderPlatformBadge();
 
-  var resultsEl = document.getElementById('results');
-  var callsEl   = document.getElementById('calls');
+  var resultsEl    = document.getElementById('results');
+  var callsEl      = document.getElementById('calls');
+  var navigationEl = document.getElementById('navigation');
+
+  // Navigation — these buttons test navigating to the territory X-Page using
+  // ds.viewRecord with html_report__v as the object. Three identifier types are
+  // tested via the fields object: id, studio_id__v, and external_id__v.
+  //
+  // This differs from the territory → account pattern where the target record
+  // was account__v — here we are addressing the X-Page report record directly.
+  //
+  // Territory record ID buttons will be added once the ID is confirmed via
+  // the territory page probe.
+  var navButtons = [
+    {
+      label:  'Go to Territory X-Page (html id)',
+      config: {
+        object: 'html_report__v',
+        fields: { id: 'V8P000000007001' }
+      }
+    },
+    {
+      label:  'Go to Territory X-Page (studio_id)',
+      config: {
+        object: 'html_report__v',
+        fields: { studio_id__v: 'de13a650-6512-4f63-93ce-0a43f6a8b506' }
+      }
+    },
+    {
+      label:  'Go to Territory X-Page (external_id)',
+      config: {
+        object: 'html_report__v',
+        fields: { external_id__v: 'Territory Entry Point - Test' }
+      }
+    }
+  ];
+
+  var actionsHtml = '<div class="nav-actions">';
+  navButtons.forEach(function (btn) {
+    actionsHtml += '<button class="nav-button" data-label="' + btn.label + '">' + btn.label + '</button>';
+  });
+  actionsHtml += '</div>';
+  navigationEl.innerHTML = actionsHtml;
+
+  // Attach click handlers after the buttons are in the DOM.
+  // Each handler fires the corresponding ds.viewRecord call and logs the result.
+  var buttonEls = navigationEl.querySelectorAll('.nav-button');
+  buttonEls.forEach(function (buttonEl, index) {
+    buttonEl.addEventListener('click', function () {
+      var config = navButtons[index].config;
+      ds.viewRecord(config)
+        .then(function (response) {
+          console.log('[Account Entry Point] Navigation — ' + navButtons[index].label + ' resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Account Entry Point] Navigation — ' + navButtons[index].label + ' rejected:', error);
+        });
+    });
+  });
 
   // Step 1: Fetch context data in parallel.
   // All three getDataForCurrentObject calls are fired together — the library
