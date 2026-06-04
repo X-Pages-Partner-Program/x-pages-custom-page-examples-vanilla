@@ -10,8 +10,8 @@
  *   ds.getDataForCurrentObject('html_report__v', 'id')
  *   → { html_report__v: { id: '...' } }
  *
- * getAvailableObjects returns the full response — logged and rendered as raw
- * JSON to confirm the response shape empirically before extracting values.
+ * getAvailableObjects logs the full raw response to the console. The page
+ * renders a success confirmation only — see the console for the full response.
  *
  * The Navigation section demonstrates ds.viewRecord, which navigates to a
  * different record. The optional target parameter specifies which X-Page tab
@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.1';
+  var VERSION = '1.0.2';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -153,12 +153,12 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (response) {
       console.log('[Territory Entry Point] Resolved: getAvailableObjects', response);
       var result = { status: 'fulfilled', value: response };
-      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function(v) { return JSON.stringify(v); });
+      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function() { return '✓ success — see console for full response'; });
     })
     .catch(function (error) {
       console.log('[Territory Entry Point] Rejected: getAvailableObjects', error);
       var result = { status: 'rejected', reason: error };
-      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function(v) { return JSON.stringify(v); });
+      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function() { return '✓ success — see console for full response'; });
     });
 
 });
