@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.3';
+  var VERSION = '1.0.4';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -39,62 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var callsEl      = document.getElementById('calls');
   var navigationEl = document.getElementById('navigation');
 
-  // Navigation — these buttons test navigating to the territory X-Page using
-  // ds.viewRecord with html_report__v as the object. Three identifier types are
-  // tested via the fields object: id, studio_id__v, and external_id__v.
-  //
-  // This differs from the territory → account pattern where the target record
-  // was account__v — here we are addressing the X-Page report record directly.
-  //
-  // Territory record ID buttons will be added once the ID is confirmed via
-  // the territory page probe.
-  var navButtons = [
-    {
-      label:  'Go to Territory X-Page (html id)',
-      config: {
-        object: 'html_report__v',
-        fields: { id: 'V8P000000007001' }
-      }
-    },
-    {
-      label:  'Go to Territory X-Page (studio_id)',
-      config: {
-        object: 'html_report__v',
-        fields: { studio_id__v: 'de13a650-6512-4f63-93ce-0a43f6a8b506' }
-      }
-    },
-    {
-      label:  'Go to Territory X-Page (external_id)',
-      config: {
-        object: 'html_report__v',
-        fields: { external_id__v: 'Territory Entry Point - Test' }
-      }
-    },
-    {
-      label:  'Go to Territory (VCR000000003005) + X-Page',
-      config: {
-        object: 'territory__v',
-        fields: { id: 'VCR000000003005' },
-        target: [{ id: 'V8P000000007001' }]
-      }
-    },
-    {
-      label:  'Go to Territory (VCR000000003011) + X-Page',
-      config: {
-        object: 'territory__v',
-        fields: { id: 'VCR000000003011' },
-        target: [{ id: 'V8P000000007001' }]
-      }
-    },
-    {
-      label:  'Go to Territory (VCR000000001001) + X-Page',
-      config: {
-        object: 'territory__v',
-        fields: { id: 'VCR000000001001' },
-        target: [{ id: 'V8P000000007001' }]
-      }
-    }
-  ];
+  // Navigation — viewRecord buttons. Currently empty; buttons will be added
+  // once target IDs are confirmed from testing.
+  var navButtons = [];
 
   var actionsHtml = '<div class="nav-actions">';
   navButtons.forEach(function (btn) {
