@@ -2,25 +2,21 @@
  * Territory Entry Point - main.js
  *
  * Demonstrates using getDataForCurrentObject and getAvailableObjects from a
- * Territory entry point context. All calls are made in parallel using
- * Promise.allSettled().
- *
- * Promise.allSettled() is used instead of Promise.all() so that a failure on
- * one call does not prevent the others from returning. Each result is handled
- * individually, making it easy to see exactly which calls succeed or fail.
+ * Territory entry point context. Each call is fired independently so its
+ * resolve/reject lifecycle can be observed in isolation.
  *
  * Response shape: each getDataForCurrentObject call returns an object keyed
  * by the object name, containing the requested field as a property. For example:
  *   ds.getDataForCurrentObject('html_report__v', 'id')
  *   → { html_report__v: { id: '...' } }
  *
- * getAvailableObjects returns the full response — log and render as raw JSON
- * to confirm the response shape empirically before extracting values.
+ * getAvailableObjects returns the full response — logged and rendered as raw
+ * JSON to confirm the response shape empirically before extracting values.
  *
- * The Navigation section below demonstrates ds.viewRecord, which navigates
- * to a different record. The optional target parameter specifies which X-Page
- * tab to land on at the destination. Buttons 2, 3, and 4 test the three
- * accepted target identifier types: id, studio_id__v, and external_id__v.
+ * The Navigation section demonstrates ds.viewRecord, which navigates to a
+ * different record. The optional target parameter specifies which X-Page tab
+ * to land on at the destination. Buttons 2, 3, and 4 test the three accepted
+ * target identifier types: id, studio_id__v, and external_id__v.
  * Hardcoded IDs are real values from our test environment.
  *
  * NOTE: These calls only work when deployed inside Vault CRM. Running this
@@ -29,41 +25,13 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  console.log('[Territory Entry Point] DOMContentLoaded fired');
+
   var resultsEl    = document.getElementById('results');
   var navigationEl = document.getElementById('navigation');
 
-  // Fire all calls in parallel.
-  // allSettled() ensures every call gets a chance to resolve or reject
-  // independently — a failure on one will not abort the others.
-  Promise.allSettled([
-    ds.getDataForCurrentObject('user__sys', 'name__v'),
-    ds.getDataForCurrentObject('html_report__v', 'id'),
-    ds.getDataForCurrentObject('html_report__v', 'name__v'),
-    ds.getAvailableObjects()
-  ])
-  .then(function (results) {
-
-    var userNameResult          = results[0];
-    var reportIdResult          = results[1];
-    var reportNameResult        = results[2];
-    var availableObjectsResult  = results[3];
-
-    // Log all raw responses to the console for inspection
-    console.log('[Territory Entry Point] Raw result - user__sys name__v:', userNameResult);
-    console.log('[Territory Entry Point] Raw result - html_report__v id:', reportIdResult);
-    console.log('[Territory Entry Point] Raw result - html_report__v name__v:', reportNameResult);
-    console.log('[Territory Entry Point] Raw result - getAvailableObjects:', availableObjectsResult);
-
-    // Render each result — fulfilled values are extracted from the confirmed
-    // response shape; rejected calls show which call failed and the error message.
-    // getAvailableObjects is rendered as raw JSON to confirm the response shape.
-    resultsEl.innerHTML =
-      renderResult('user__sys → name__v',      userNameResult,         function(v) { return v.user__sys.name__v; })         +
-      renderResult('html_report__v → id',      reportIdResult,         function(v) { return v.html_report__v.id; })         +
-      renderResult('html_report__v → name__v', reportNameResult,       function(v) { return v.html_report__v.name__v; })    +
-      renderResult('getAvailableObjects',      availableObjectsResult, function(v) { return JSON.stringify(v); });
-
-  });
+  // Clear the loading placeholder before any results are appended
+  resultsEl.innerHTML = '';
 
   // Navigation — ds.viewRecord navigates to a different record in Vault CRM.
   // The optional target parameter specifies which X-Page tab to open at the
@@ -104,12 +72,16 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   ];
 
+  console.log('[Territory Entry Point] Building navigation buttons...');
+
   var actionsHtml = '<div class="nav-actions">';
   buttons.forEach(function (btn) {
     actionsHtml += '<button class="nav-button" data-label="' + btn.label + '">' + btn.label + '</button>';
   });
   actionsHtml += '</div>';
   navigationEl.innerHTML = actionsHtml;
+
+  console.log('[Territory Entry Point] Navigation buttons rendered:', navigationEl.innerHTML);
 
   // Attach click handlers after the buttons are in the DOM.
   // Each handler fires the corresponding ds.viewRecord call and logs the result.
@@ -126,6 +98,62 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
   });
+
+  // Each data call is fired independently so its resolve/reject lifecycle is
+  // visible in isolation. Results are appended to resultsEl as each call settles
+  // rather than waiting for all calls to complete before rendering anything.
+
+  console.log('[Territory Entry Point] Firing: getDataForCurrentObject user__sys name__v');
+  ds.getDataForCurrentObject('user__sys', 'name__v')
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getDataForCurrentObject user__sys name__v', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('user__sys → name__v', result, function(v) { return v.user__sys.name__v; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getDataForCurrentObject user__sys name__v', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('user__sys → name__v', result, function(v) { return v.user__sys.name__v; });
+    });
+
+  console.log('[Territory Entry Point] Firing: getDataForCurrentObject html_report__v id');
+  ds.getDataForCurrentObject('html_report__v', 'id')
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getDataForCurrentObject html_report__v id', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('html_report__v → id', result, function(v) { return v.html_report__v.id; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getDataForCurrentObject html_report__v id', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('html_report__v → id', result, function(v) { return v.html_report__v.id; });
+    });
+
+  console.log('[Territory Entry Point] Firing: getDataForCurrentObject html_report__v name__v');
+  ds.getDataForCurrentObject('html_report__v', 'name__v')
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getDataForCurrentObject html_report__v name__v', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('html_report__v → name__v', result, function(v) { return v.html_report__v.name__v; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getDataForCurrentObject html_report__v name__v', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('html_report__v → name__v', result, function(v) { return v.html_report__v.name__v; });
+    });
+
+  console.log('[Territory Entry Point] Firing: getAvailableObjects');
+  ds.getAvailableObjects()
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getAvailableObjects', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function(v) { return JSON.stringify(v); });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getAvailableObjects', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('getAvailableObjects', result, function(v) { return JSON.stringify(v); });
+    });
 
 });
 
