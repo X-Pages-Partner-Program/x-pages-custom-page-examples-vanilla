@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.1';
+  var VERSION = '1.0.2';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -71,24 +71,27 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     },
     {
-      label:  'Go to Territory (VCR000000003005)',
+      label:  'Go to Territory (VCR000000003005) + X-Page',
       config: {
         object: 'territory__v',
-        fields: { id: 'VCR000000003005' }
+        fields: { id: 'VCR000000003005' },
+        target: [{ id: 'V8P000000007001' }]
       }
     },
     {
-      label:  'Go to Territory (VCR000000003011)',
+      label:  'Go to Territory (VCR000000003011) + X-Page',
       config: {
         object: 'territory__v',
-        fields: { id: 'VCR000000003011' }
+        fields: { id: 'VCR000000003011' },
+        target: [{ id: 'V8P000000007001' }]
       }
     },
     {
-      label:  'Go to Territory (VCR000000001001)',
+      label:  'Go to Territory (VCR000000001001) + X-Page',
       config: {
         object: 'territory__v',
-        fields: { id: 'VCR000000001001' }
+        fields: { id: 'VCR000000001001' },
+        target: [{ id: 'V8P000000007001' }]
       }
     }
   ];
