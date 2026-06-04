@@ -126,6 +126,17 @@ h1 {
   background: #155a9e;
 }
 
+/* Version stamp — fixed bottom-left, incremented manually on each deploy */
+.version-stamp {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #bbb;
+  letter-spacing: 0.05em;
+}
+
 /* Error state */
 .error {
   color: #c0392b;

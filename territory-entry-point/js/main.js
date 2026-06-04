@@ -25,6 +25,12 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+  var VERSION = '1.0.1';
+  var versionEl = document.createElement('div');
+  versionEl.className = 'version-stamp';
+  versionEl.textContent = 'v' + VERSION;
+  document.body.appendChild(versionEl);
+
   console.log('[Territory Entry Point] DOMContentLoaded fired');
 
   var resultsEl    = document.getElementById('results');
