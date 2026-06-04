@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.2';
+  var VERSION = '1.0.3';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -159,6 +159,19 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('[Territory Entry Point] Rejected: getAvailableObjects', error);
       var result = { status: 'rejected', reason: error };
       resultsEl.innerHTML += renderResult('getAvailableObjects', result, function() { return '✓ success — see console for full response'; });
+    });
+
+  console.log('[Territory Entry Point] Firing: getDataForCurrentObject territory__v id');
+  ds.getDataForCurrentObject('territory__v', 'id')
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getDataForCurrentObject territory__v id', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('territory__v → id', result, function(v) { return v.territory__v.id; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getDataForCurrentObject territory__v id', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('territory__v → id', result, function(v) { return v.territory__v.id; });
     });
 
 });
