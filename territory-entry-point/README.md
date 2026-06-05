@@ -10,10 +10,12 @@ The Territory entry point is **not fully documented** in the official X-Pages do
 
 - `getDataForCurrentObject` — fetches `user__sys name__v`, `html_report__v id`, and `html_report__v name__v` from the current context
 - `getAvailableObjects` — logs all available objects to the console; renders a success/error row on the page
-- `getAlignedTerritories()` — fires without `includeChildren`; renders success/error row, full response in console
-- `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; renders success/error row, full response in console
+- `getAlignedTerritories()` — fires without `includeChildren`; renders territory rows into the Aligned Territories section (full response in console)
+- `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; appends child territories to the same section with a group label
 - `getObjectMetadata({ object: 'territory__v' })` — fetches metadata for `territory__v`; renders success/error row, full response in console
-- `queryRecord` on `account__v` — fetches the first 5 accounts (`id`, `name__v`). Each account renders as a clickable row with phone and email action buttons. Clicking the account name fires `ds.viewRecord` to navigate to that account's X-Page tab. Phone and email buttons log to the console (stubs, wired up later).
+- `getObjectMetadata({ object: 'account__v' })` — fetches metadata for `account__v` to confirm the account type field name and picklist values needed for the HCP filter; renders success/error row, full response in console
+- `queryRecord` on `account__v` — HCP list: first 5 accounts filtered by `account_type__v = 'professional__v'`. **Note: field name and picklist value are unconfirmed** — check the `getObjectMetadata account__v` console output from this deploy to verify before relying on this filter. Each account renders as a clickable row with phone and email action buttons.
+- `queryRecord` on `call2__v` — first 5 calls in the territory, sorted by date descending. Each row is clickable and navigates to the call record via `ds.viewRecord`.
 
 ## Important
 
@@ -25,7 +27,7 @@ The Territory entry point is **not fully documented** in the official X-Pages do
 territory-entry-point/
   index.html                  # Entry point
   css/style.css               # Styles
-  js/main.js                  # Exploratory data calls and rendering logic
+  js/main.js                  # Data calls and rendering logic
   assets/icons/phone.svg      # Phone icon for account action button
   assets/icons/email.svg      # Email icon for account action button
   lib/q.js                    # Q promise library (unmodified)

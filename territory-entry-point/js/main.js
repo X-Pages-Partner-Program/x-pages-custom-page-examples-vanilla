@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.6';
+  var VERSION = '1.0.7';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -36,12 +36,14 @@ document.addEventListener('DOMContentLoaded', function () {
   var resultsEl     = document.getElementById('results');
   var territoriesEl = document.getElementById('territories');
   var accountsEl    = document.getElementById('accounts');
+  var callsEl       = document.getElementById('calls');
   var navigationEl  = document.getElementById('navigation');
 
   // Clear the loading placeholders before any results are appended
   resultsEl.innerHTML     = '';
   territoriesEl.innerHTML = '';
   accountsEl.innerHTML    = '';
+  callsEl.innerHTML       = '';
 
   // Navigation — ds.viewRecord navigates to a different record in Vault CRM.
   // The optional target parameter specifies which X-Page tab to open at the
@@ -189,26 +191,34 @@ document.addEventListener('DOMContentLoaded', function () {
   ds.getAlignedTerritories()
     .then(function (response) {
       console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: false)', response);
-      var result = { status: 'fulfilled', value: response };
-      resultsEl.innerHTML += renderResult('getAlignedTerritories (no children)', result, function() { return '✓ success — see console for full response'; });
+      var territories = response && response.territories ? response.territories : (Array.isArray(response) ? response : []);
+      if (territories.length === 0) {
+        territoriesEl.innerHTML += '<p class="no-results">No territories returned (includeChildren: false) — see console.</p>';
+      } else {
+        territoriesEl.innerHTML += territories.map(function(t) { return renderTerritoryRow(t); }).join('');
+      }
     })
     .catch(function (error) {
       console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: false)', error);
-      var result = { status: 'rejected', reason: error };
-      resultsEl.innerHTML += renderResult('getAlignedTerritories (no children)', result, function() { return ''; });
+      var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
+      territoriesEl.innerHTML += '<p class="error">getAlignedTerritories error: ' + errorMessage + '</p>';
     });
 
   console.log('[Territory Entry Point] Firing: getAlignedTerritories (includeChildren: true)');
   ds.getAlignedTerritories({ includeChildren: true })
     .then(function (response) {
       console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: true)', response);
-      var result = { status: 'fulfilled', value: response };
-      resultsEl.innerHTML += renderResult('getAlignedTerritories (with children)', result, function() { return '✓ success — see console for full response'; });
+      var territories = response && response.territories ? response.territories : (Array.isArray(response) ? response : []);
+      if (territories.length === 0) {
+        territoriesEl.innerHTML += '<p class="no-results">No additional territories returned (includeChildren: true) — see console.</p>';
+      } else {
+        territoriesEl.innerHTML += '<div class="territory-group-label">With children:</div>' + territories.map(function(t) { return renderTerritoryRow(t); }).join('');
+      }
     })
     .catch(function (error) {
       console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: true)', error);
-      var result = { status: 'rejected', reason: error };
-      resultsEl.innerHTML += renderResult('getAlignedTerritories (with children)', result, function() { return ''; });
+      var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
+      territoriesEl.innerHTML += '<p class="error">getAlignedTerritories error: ' + errorMessage + '</p>';
     });
 
   // getObjectMetadata on territory__v — exploratory, log to console.
@@ -225,11 +235,29 @@ document.addEventListener('DOMContentLoaded', function () {
       resultsEl.innerHTML += renderResult('getObjectMetadata territory__v', result, function() { return ''; });
     });
 
-  // queryRecord — first 5 accounts (no filter, no sort — exploratory baseline).
+  // getObjectMetadata on account__v — we need the account type field name and
+  // picklist values to correctly filter the HCP list. Expected field: account_type__v
+  // or similar. Check console output to confirm field name and 'Professional' value.
+  console.log('[Territory Entry Point] Firing: getObjectMetadata account__v');
+  ds.getObjectMetadata({ object: 'account__v' })
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getObjectMetadata account__v', response);
+      resultsEl.innerHTML += renderResult('getObjectMetadata account__v', { status: 'fulfilled', value: response }, function() { return '✓ success — see console for field/type details'; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getObjectMetadata account__v', error);
+      resultsEl.innerHTML += renderResult('getObjectMetadata account__v', { status: 'rejected', reason: error }, function() { return ''; });
+    });
+
+  // HCP List — first 5 Professional accounts.
+  // NOTE: account_type__v field name and 'professional__v' picklist value are
+  // unconfirmed — check getObjectMetadata account__v console output to verify
+  // before relying on this filter.
   console.log('[Territory Entry Point] Firing: queryRecord account__v (limit 5)');
   ds.queryRecord({
     object: 'account__v',
-    fields: ['id', 'name__v'],
+    fields: ['id', 'name__v', 'account_type__v'],
+    where: "account_type__v = 'professional__v'",
     limit: 5
   })
   .then(function (response) {
@@ -288,6 +316,49 @@ document.addEventListener('DOMContentLoaded', function () {
     accountsEl.innerHTML = '<p class="error">Error fetching accounts. Check the console for details.</p>';
   });
 
+  // Recent calls — first 5, no account filter (territory context), sorted by date descending.
+  console.log('[Territory Entry Point] Firing: queryRecord call2__v (limit 5)');
+  ds.queryRecord({
+    object: 'call2__v',
+    fields: ['id', 'name__v', 'call_date__v', 'status__v'],
+    sort:   ['call_date__v DESC'],
+    limit:  5
+  })
+  .then(function (response) {
+    console.log('[Territory Entry Point] Resolved: queryRecord call2__v', response);
+
+    var records = response.call2__v;
+
+    if (!records || records.length === 0) {
+      callsEl.innerHTML = '<p class="no-results">No calls found.</p>';
+      return;
+    }
+
+    callsEl.innerHTML = records.map(function (call) {
+      return renderCallRow(call);
+    }).join('');
+
+    // Attach click handlers — clicking a call row navigates to the call record.
+    callsEl.querySelectorAll('.call-id-link').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var callId = el.getAttribute('data-call-id');
+        console.log('[Territory Entry Point] Navigating to call:', callId);
+        ds.viewRecord({ object: 'call2__v', fields: { id: callId } })
+          .then(function (response) {
+            console.log('[Territory Entry Point] viewRecord call2__v resolved:', response);
+          })
+          .catch(function (error) {
+            console.log('[Territory Entry Point] viewRecord call2__v rejected:', error);
+          });
+      });
+    });
+
+  })
+  .catch(function (error) {
+    console.error('[Territory Entry Point] Error fetching calls:', error);
+    callsEl.innerHTML = '<p class="error">Error fetching calls. Check the console for details.</p>';
+  });
+
 });
 
 /**
@@ -337,6 +408,42 @@ function renderAccountRow(account) {
           '<img src="assets/icons/email.svg" alt="Email" width="16" height="16" />' +
         '</button>' +
       '</div>' +
+    '</div>'
+  );
+}
+
+/**
+ * Renders a single territory as a labelled row.
+ * Shape confirmed from live response: { id, name, developerName, parentTerritoryId, description }
+ * @param {Object} territory
+ * @returns {string} HTML string
+ */
+function renderTerritoryRow(territory) {
+  return (
+    '<div class="data-row">' +
+      '<span class="data-label">' + (territory.developerName || '—') + '</span>' +
+      '<span class="data-value">' + (territory.name || '—') + (territory.parentTerritoryId ? ' <span class="territory-parent">(parent: ' + territory.parentTerritoryId + ')</span>' : '') + '</span>' +
+    '</div>'
+  );
+}
+
+/**
+ * Renders a single call record as a row. Clicking the call ID navigates to
+ * the call record via ds.viewRecord.
+ * @param {Object} call
+ * @returns {string} HTML string
+ */
+function renderCallRow(call) {
+  var id     = call.id            || '';
+  var name   = call.name__v       || '—';
+  var date   = call.call_date__v  ? String(call.call_date__v) : '—';
+  var status = call.status__v     || '—';
+  return (
+    '<div class="call-row">' +
+      '<div class="call-field"><span class="data-label">Name</span><span class="data-value">' + name + '</span></div>' +
+      '<div class="call-field"><span class="data-label">Date</span><span class="data-value">' + date + '</span></div>' +
+      '<div class="call-field"><span class="data-label">Status</span><span class="data-value">' + status + '</span></div>' +
+      '<div class="call-field call-field--id"><span class="data-label">ID</span><span class="data-value call-id-link" data-call-id="' + id + '">' + id + '</span></div>' +
     '</div>'
   );
 }
