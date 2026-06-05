@@ -1,14 +1,13 @@
 # Account Entry Point Example
 
-Demonstrates how to use `getDataForCurrentObject` from the X-Pages JS Library to retrieve data about the current account and logged-in user when an X-Page is launched from an Account record.
+Demonstrates how to use `getDataForCurrentObject`, `queryRecord`, `getAvailableObjects`, and `getObjectMetadata` from the X-Pages JS Library when an X-Page is launched from an Account record.
 
 ## What it fetches
 
-- `account__v` → `id` — the Vault ID of the current account
-- `account__v` → `name__v` — the name of the current account
-- `user__sys` → `name__v` — the name of the currently logged-in user
-
-All three calls are made in parallel using `Promise.all()`. The full raw response for each call is logged to the console, and the values are rendered on the page.
+- `getDataForCurrentObject` — retrieves `account__v id`, `account__v name__v`, and `user__sys name__v` from the current context (fired in parallel via `Promise.all`)
+- `queryRecord` on `call2__v` — fetches the 5 most recent calls for the current account, sorted by date descending. Each call renders as a row; clicking the call ID navigates to that record via `ds.viewRecord`
+- `getAvailableObjects` — logs all available objects to the console; renders a success/error row on the page
+- `getObjectMetadata({ object: 'account__v' })` — fetches metadata for `account__v`; renders a success/error row on the page, full response in console
 
 ## Important
 
@@ -19,7 +18,7 @@ All three calls are made in parallel using `Promise.all()`. The full raw respons
 ```
 account-entry-point/
   index.html          # Entry point
-  css/style.css       # Minimal styles
+  css/style.css       # Styles
   js/main.js          # Data calls and rendering logic
   lib/q.js            # Q promise library (unmodified)
   lib/X-PagesLibrary.js  # X-Pages JS Library (unmodified)

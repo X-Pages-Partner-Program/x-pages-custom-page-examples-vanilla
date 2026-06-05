@@ -1,16 +1,19 @@
 # Territory Entry Point Example
 
-Exploratory example that calls `getDataForCurrentObject` from a Territory entry point context in Vault CRM.
+Exploratory example that fires multiple X-Pages JS Library calls from a Territory entry point context in Vault CRM.
 
 ## Purpose
 
-The Territory entry point is **not listed in the official X-Pages documentation** as a supported context for `getDataForCurrentObject`. This example is intentionally exploratory — it is designed to validate what Vault CRM actually returns (or whether an error is thrown) when this call is made from a Territory context.
+The Territory entry point is **not fully documented** in the official X-Pages docs. This example is intentionally exploratory — each call is fired independently so its resolve/reject lifecycle can be observed in isolation. All raw responses are logged to the console.
 
-## What it attempts to fetch
+## What it calls
 
-- `account__v` → `id` — the Vault ID of the current account (if available in this context)
-
-The full raw response is logged to the console and rendered on the page to make it easy to inspect the result when deployed.
+- `getDataForCurrentObject` — fetches `user__sys name__v`, `html_report__v id`, and `html_report__v name__v` from the current context
+- `getAvailableObjects` — logs all available objects to the console; renders a success/error row on the page
+- `getAlignedTerritories()` — fires without `includeChildren`; renders success/error row, full response in console
+- `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; renders success/error row, full response in console
+- `getObjectMetadata({ object: 'territory__v' })` — fetches metadata for `territory__v`; renders success/error row, full response in console
+- `queryRecord` on `account__v` — fetches the first 5 accounts (`id`, `name__v`). Each account renders as a clickable row with phone and email action buttons. Clicking the account name fires `ds.viewRecord` to navigate to that account's X-Page tab. Phone and email buttons log to the console (stubs, wired up later).
 
 ## Important
 
@@ -20,9 +23,11 @@ The full raw response is logged to the console and rendered on the page to make 
 
 ```
 territory-entry-point/
-  index.html          # Entry point
-  css/style.css       # Minimal styles
-  js/main.js          # Exploratory data call and rendering logic
-  lib/q.js            # Q promise library (unmodified)
-  lib/X-PagesLibrary.js  # X-Pages JS Library (unmodified)
+  index.html                  # Entry point
+  css/style.css               # Styles
+  js/main.js                  # Exploratory data calls and rendering logic
+  assets/icons/phone.svg      # Phone icon for account action button
+  assets/icons/email.svg      # Email icon for account action button
+  lib/q.js                    # Q promise library (unmodified)
+  lib/X-PagesLibrary.js       # X-Pages JS Library (unmodified)
 ```

@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.6';
+  var VERSION = '1.0.7';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
       fields: ['id', 'name__v', 'call_date__v', 'status__v'],
       where:  'account__v = \'' + accountId + '\'',
       sort:   ['call_date__v DESC'],
-      limit:  10
+      limit:  5
     })
     .then(function (callsResponse) {
 
@@ -194,6 +194,19 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('[Account Entry Point] Rejected: getAvailableObjects', error);
       var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
       resultsEl.innerHTML += renderRow('getAvailableObjects', 'Error: ' + errorMessage);
+    });
+
+  // getObjectMetadata on account__v — exploratory, log full response to console.
+  console.log('[Account Entry Point] Firing: getObjectMetadata account__v');
+  ds.getObjectMetadata({ object: 'account__v' })
+    .then(function (response) {
+      console.log('[Account Entry Point] Resolved: getObjectMetadata account__v', response);
+      resultsEl.innerHTML += renderRow('getObjectMetadata account__v', '✓ success — see console for full response');
+    })
+    .catch(function (error) {
+      console.log('[Account Entry Point] Rejected: getObjectMetadata account__v', error);
+      var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
+      resultsEl.innerHTML += renderRow('getObjectMetadata account__v', 'Error: ' + errorMessage);
     });
 
 });

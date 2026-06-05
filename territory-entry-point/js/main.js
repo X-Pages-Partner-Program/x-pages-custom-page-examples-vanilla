@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.5';
+  var VERSION = '1.0.6';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -33,11 +33,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   console.log('[Territory Entry Point] DOMContentLoaded fired');
 
-  var resultsEl    = document.getElementById('results');
-  var navigationEl = document.getElementById('navigation');
+  var resultsEl     = document.getElementById('results');
+  var territoriesEl = document.getElementById('territories');
+  var accountsEl    = document.getElementById('accounts');
+  var navigationEl  = document.getElementById('navigation');
 
-  // Clear the loading placeholder before any results are appended
-  resultsEl.innerHTML = '';
+  // Clear the loading placeholders before any results are appended
+  resultsEl.innerHTML     = '';
+  territoriesEl.innerHTML = '';
+  accountsEl.innerHTML    = '';
 
   // Navigation — ds.viewRecord navigates to a different record in Vault CRM.
   // The optional target parameter specifies which X-Page tab to open at the
@@ -179,6 +183,110 @@ document.addEventListener('DOMContentLoaded', function () {
       resultsEl.innerHTML += renderResult('getAvailableObjects', result, function() { return '✓ success — see console for full response'; });
     });
 
+  // getAlignedTerritories — fired twice: without and with includeChildren.
+  // Exploratory — log full response to console and render success/error on page.
+  console.log('[Territory Entry Point] Firing: getAlignedTerritories (includeChildren: false)');
+  ds.getAlignedTerritories()
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: false)', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('getAlignedTerritories (no children)', result, function() { return '✓ success — see console for full response'; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: false)', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('getAlignedTerritories (no children)', result, function() { return ''; });
+    });
+
+  console.log('[Territory Entry Point] Firing: getAlignedTerritories (includeChildren: true)');
+  ds.getAlignedTerritories({ includeChildren: true })
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: true)', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('getAlignedTerritories (with children)', result, function() { return '✓ success — see console for full response'; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: true)', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('getAlignedTerritories (with children)', result, function() { return ''; });
+    });
+
+  // getObjectMetadata on territory__v — exploratory, log to console.
+  console.log('[Territory Entry Point] Firing: getObjectMetadata territory__v');
+  ds.getObjectMetadata({ object: 'territory__v' })
+    .then(function (response) {
+      console.log('[Territory Entry Point] Resolved: getObjectMetadata territory__v', response);
+      var result = { status: 'fulfilled', value: response };
+      resultsEl.innerHTML += renderResult('getObjectMetadata territory__v', result, function() { return '✓ success — see console for full response'; });
+    })
+    .catch(function (error) {
+      console.log('[Territory Entry Point] Rejected: getObjectMetadata territory__v', error);
+      var result = { status: 'rejected', reason: error };
+      resultsEl.innerHTML += renderResult('getObjectMetadata territory__v', result, function() { return ''; });
+    });
+
+  // queryRecord — first 5 accounts (no filter, no sort — exploratory baseline).
+  console.log('[Territory Entry Point] Firing: queryRecord account__v (limit 5)');
+  ds.queryRecord({
+    object: 'account__v',
+    fields: ['id', 'name__v'],
+    limit: 5
+  })
+  .then(function (response) {
+    console.log('[Territory Entry Point] Resolved: queryRecord account__v', response);
+
+    var records = response.account__v;
+
+    if (!records || records.length === 0) {
+      accountsEl.innerHTML = '<p class="no-results">No accounts found.</p>';
+      return;
+    }
+
+    accountsEl.innerHTML = records.map(function (account) {
+      return renderAccountRow(account);
+    }).join('');
+
+    // Attach click handlers after rows are in the DOM.
+    // Account name click — viewRecord to the account's X-Page tab.
+    accountsEl.querySelectorAll('.account-name-link').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Navigating to account:', accountId);
+        ds.viewRecord({
+          object: 'account__v',
+          fields: { id: accountId },
+          target: [{ id: 'V8P000000008001' }]
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] viewRecord account__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] viewRecord account__v rejected:', error);
+        });
+      });
+    });
+
+    // Phone button — stub, wired up later.
+    accountsEl.querySelectorAll('.account-action--phone').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Phone button clicked for account:', accountId);
+      });
+    });
+
+    // Email button — stub, wired up later.
+    accountsEl.querySelectorAll('.account-action--email').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Email button clicked for account:', accountId);
+      });
+    });
+
+  })
+  .catch(function (error) {
+    console.error('[Territory Entry Point] Error fetching accounts:', error);
+    accountsEl.innerHTML = '<p class="error">Error fetching accounts. Check the console for details.</p>';
+  });
 
 });
 
@@ -206,6 +314,29 @@ function renderResult(label, result, extractor) {
     '<div class="data-row">' +
       '<span class="data-label">' + label + '</span>' +
       '<span class="data-value error-inline">Error: ' + errorMessage + '</span>' +
+    '</div>'
+  );
+}
+
+/**
+ * Renders a single account row with a clickable name and phone/email action buttons.
+ * @param {Object} account - a record object from the queryRecord response
+ * @returns {string} HTML string
+ */
+function renderAccountRow(account) {
+  var id   = account.id   || '';
+  var name = account.name__v || '—';
+  return (
+    '<div class="account-row">' +
+      '<span class="account-name account-name-link" data-account-id="' + id + '">' + name + '</span>' +
+      '<div class="account-actions">' +
+        '<button class="account-action account-action--phone" data-account-id="' + id + '" title="Call">' +
+          '<img src="assets/icons/phone.svg" alt="Call" width="16" height="16" />' +
+        '</button>' +
+        '<button class="account-action account-action--email" data-account-id="' + id + '" title="Email">' +
+          '<img src="assets/icons/email.svg" alt="Email" width="16" height="16" />' +
+        '</button>' +
+      '</div>' +
     '</div>'
   );
 }
