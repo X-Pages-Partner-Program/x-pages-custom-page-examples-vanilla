@@ -191,15 +191,15 @@ document.addEventListener('DOMContentLoaded', function () {
   ds.getAlignedTerritories()
     .then(function (response) {
       console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: false)', response);
-      var territories = response && response.territories ? response.territories : (Array.isArray(response) ? response : []);
+      var territories = Array.isArray(response) ? response : (response && response.territories ? response.territories : []);
       if (territories.length === 0) {
-        territoriesEl.innerHTML += '<p class="no-results">No territories returned (includeChildren: false) — see console.</p>';
+        territoriesEl.innerHTML += '<p class="no-results">No territories returned — see console.</p>';
       } else {
-        territoriesEl.innerHTML += territories.map(function(t) { return renderTerritoryRow(t); }).join('');
+        territoriesEl.innerHTML += territories.map(function (t) { return renderTerritoryRow(t); }).join('');
       }
     })
     .catch(function (error) {
-      console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: false)', error);
+      console.log('[Territory Entry Point] Rejected: getAlignedTerritories', error);
       var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
       territoriesEl.innerHTML += '<p class="error">getAlignedTerritories error: ' + errorMessage + '</p>';
     });
@@ -208,15 +208,15 @@ document.addEventListener('DOMContentLoaded', function () {
   ds.getAlignedTerritories({ includeChildren: true })
     .then(function (response) {
       console.log('[Territory Entry Point] Resolved: getAlignedTerritories (includeChildren: true)', response);
-      var territories = response && response.territories ? response.territories : (Array.isArray(response) ? response : []);
+      var territories = Array.isArray(response) ? response : (response && response.territories ? response.territories : []);
       if (territories.length === 0) {
-        territoriesEl.innerHTML += '<p class="no-results">No additional territories returned (includeChildren: true) — see console.</p>';
+        territoriesEl.innerHTML += '<p class="no-results">No additional territories (includeChildren: true) — see console.</p>';
       } else {
-        territoriesEl.innerHTML += '<div class="territory-group-label">With children:</div>' + territories.map(function(t) { return renderTerritoryRow(t); }).join('');
+        territoriesEl.innerHTML += '<div class="territory-group-label">With children:</div>' + territories.map(function (t) { return renderTerritoryRow(t); }).join('');
       }
     })
     .catch(function (error) {
-      console.log('[Territory Entry Point] Rejected: getAlignedTerritories (includeChildren: true)', error);
+      console.log('[Territory Entry Point] Rejected: getAlignedTerritories', error);
       var errorMessage = error ? (error.message || String(error)) : 'Unknown error';
       territoriesEl.innerHTML += '<p class="error">getAlignedTerritories error: ' + errorMessage + '</p>';
     });
@@ -249,15 +249,12 @@ document.addEventListener('DOMContentLoaded', function () {
       resultsEl.innerHTML += renderResult('getObjectMetadata account__v', { status: 'rejected', reason: error }, function() { return ''; });
     });
 
-  // HCP List — first 5 Professional accounts.
-  // NOTE: account_type__v field name and 'professional__v' picklist value are
-  // unconfirmed — check getObjectMetadata account__v console output to verify
-  // before relying on this filter.
+  // HCP List — first 5 Professional accounts (object_type__v = 'professional__v')
   console.log('[Territory Entry Point] Firing: queryRecord account__v (limit 5)');
   ds.queryRecord({
     object: 'account__v',
-    fields: ['id', 'name__v', 'account_type__v'],
-    where: "account_type__v = 'professional__v'",
+    fields: ['id', 'name__v', 'object_type__v'],
+    where: "object_type__v = 'professional__v'",
     limit: 5
   })
   .then(function (response) {

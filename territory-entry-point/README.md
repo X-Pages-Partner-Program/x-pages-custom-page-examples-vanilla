@@ -10,12 +10,12 @@ The Territory entry point is **not fully documented** in the official X-Pages do
 
 - `getDataForCurrentObject` — fetches `user__sys name__v`, `html_report__v id`, and `html_report__v name__v` from the current context
 - `getAvailableObjects` — logs all available objects to the console; renders a success/error row on the page
-- `getAlignedTerritories()` — fires without `includeChildren`; renders territory rows into the Aligned Territories section (full response in console)
-- `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; appends child territories to the same section with a group label
+- `getAlignedTerritories()` — fires without `includeChildren`; renders territory rows (name + developerName) into the Aligned Territories section
+- `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; appends child territories to the same section under a "With children" group label
 - `getObjectMetadata({ object: 'territory__v' })` — fetches metadata for `territory__v`; renders success/error row, full response in console
-- `getObjectMetadata({ object: 'account__v' })` — fetches metadata for `account__v` to confirm the account type field name and picklist values needed for the HCP filter; renders success/error row, full response in console
-- `queryRecord` on `account__v` — HCP list: first 5 accounts filtered by `account_type__v = 'professional__v'`. **Note: field name and picklist value are unconfirmed** — check the `getObjectMetadata account__v` console output from this deploy to verify before relying on this filter. Each account renders as a clickable row with phone and email action buttons.
-- `queryRecord` on `call2__v` — first 5 calls in the territory, sorted by date descending. Each row is clickable and navigates to the call record via `ds.viewRecord`.
+- `getObjectMetadata({ object: 'account__v' })` — fetches metadata for `account__v` to inspect field and picklist details; renders success/error row, full response in console
+- `queryRecord` on `account__v` — HCP List: first 5 accounts filtered by `object_type__v = 'professional__v'`. Each account renders as a clickable row with phone and email action buttons (phone/email are stubs, wired up later)
+- `queryRecord` on `call2__v` — Recent Calls: first 5 in the territory, sorted by date descending. Each row is clickable and navigates to the call record via `ds.viewRecord`
 
 ## Important
 
