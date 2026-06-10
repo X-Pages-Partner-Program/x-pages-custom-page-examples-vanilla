@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.9';
+  var VERSION = '1.0.10';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -33,17 +33,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
   console.log('[Territory Entry Point] DOMContentLoaded fired');
 
-  var resultsEl     = document.getElementById('results');
-  var territoriesEl = document.getElementById('territories');
-  var accountsEl    = document.getElementById('accounts');
-  var callsEl       = document.getElementById('calls');
-  var navigationEl  = document.getElementById('navigation');
+  var resultsEl      = document.getElementById('results');
+  var territoriesEl  = document.getElementById('territories');
+  var accountsEl     = document.getElementById('accounts');
+  var accountsOpenEl = document.getElementById('accounts-open');
+  var callsEl        = document.getElementById('calls');
+  var navigationEl   = document.getElementById('navigation');
 
   // Clear the loading placeholders before any results are appended
-  resultsEl.innerHTML     = '';
-  territoriesEl.innerHTML = '';
-  accountsEl.innerHTML    = '';
-  callsEl.innerHTML       = '';
+  resultsEl.innerHTML      = '';
+  territoriesEl.innerHTML  = '';
+  accountsEl.innerHTML     = '';
+  accountsOpenEl.innerHTML = '';
+  callsEl.innerHTML        = '';
 
   // Navigation — ds.viewRecord navigates to a different record in Vault CRM.
   // The optional target parameter specifies which X-Page tab to open at the
@@ -311,6 +313,66 @@ document.addEventListener('DOMContentLoaded', function () {
   .catch(function (error) {
     console.error('[Territory Entry Point] Error fetching accounts:', error);
     accountsEl.innerHTML = '<p class="error">Error fetching accounts. Check the console for details.</p>';
+  });
+
+  // HCP List (open query) — no where filter, first 5 accounts
+  console.log('[Territory Entry Point] Firing: queryRecord account__v (open, limit 5)');
+  ds.queryRecord({
+    object: 'account__v',
+    fields: ['id', 'name__v', 'object_type__v'],
+    where: '',
+    limit: 5
+  })
+  .then(function (response) {
+    console.log('[Territory Entry Point] Resolved: queryRecord account__v (open)', response);
+
+    var records = response.account__v;
+
+    if (!records || records.length === 0) {
+      accountsOpenEl.innerHTML = '<p class="no-results">No accounts found.</p>';
+      return;
+    }
+
+    accountsOpenEl.innerHTML = records.map(function (account) {
+      return renderAccountRow(account);
+    }).join('');
+
+    accountsOpenEl.querySelectorAll('.account-name-link').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Navigating to account:', accountId);
+        ds.viewRecord({
+          object: 'account__v',
+          fields: { id: accountId },
+          target: [{ id: 'V8P000000008001' }]
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] viewRecord account__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] viewRecord account__v rejected:', error);
+        });
+      });
+    });
+
+    accountsOpenEl.querySelectorAll('.account-action--phone').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Phone button clicked for account:', accountId);
+      });
+    });
+
+    accountsOpenEl.querySelectorAll('.account-action--email').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] Email button clicked for account:', accountId);
+      });
+    });
+
+  })
+  .catch(function (error) {
+    console.error('[Territory Entry Point] Error fetching accounts (open):', error);
+    accountsOpenEl.innerHTML = '<p class="error">Error fetching accounts. Check the console for details.</p>';
   });
 
   // Recent calls — first 5, no account filter (territory context), sorted by date descending.
