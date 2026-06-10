@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.7';
+  var VERSION = '1.0.8';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -111,9 +111,33 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Render context data to the page
     resultsEl.innerHTML =
-      renderRow('Account ID',   accountId)   +
-      renderRow('Account Name', accountName) +
+      renderRow('Account ID',   accountId)                    +
+      renderAccountNameRow(accountName, accountId)            +
       renderRow('Current User', userName);
+
+    // Attach click handlers to the account name action buttons
+    var phoneBtn = resultsEl.querySelector('.account-action--phone');
+    var emailBtn = resultsEl.querySelector('.account-action--email');
+    var mediaBtn = resultsEl.querySelector('.account-action--media');
+
+    phoneBtn.addEventListener('click', function () {
+      console.log('[Account Entry Point] Phone button clicked for account:', accountId);
+    });
+
+    emailBtn.addEventListener('click', function () {
+      console.log('[Account Entry Point] Email button clicked for account:', accountId);
+    });
+
+    mediaBtn.addEventListener('click', function () {
+      console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId);
+      ds.launchMediaForAccount(accountId)
+        .then(function (response) {
+          console.log('[Account Entry Point] launchMediaForAccount resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Account Entry Point] launchMediaForAccount rejected:', error);
+        });
+    });
 
     // Step 2: Query recent calls for this account, sorted by date descending.
     // This is chained after step 1 because the WHERE clause depends on
@@ -234,6 +258,34 @@ function renderPlatformBadge() {
   badge.className = 'platform-badge ' + modifier;
   badge.textContent = platform;
   document.body.appendChild(badge);
+}
+
+/**
+ * Renders the account name row with Call, Email, and Launch Media action buttons.
+ * @param {string} accountName
+ * @param {string} accountId
+ * @returns {string} HTML string
+ */
+function renderAccountNameRow(accountName, accountId) {
+  return (
+    '<div class="data-row account-name-row">' +
+      '<span class="data-label">Account Name</span>' +
+      '<span class="data-value account-name-with-actions">' +
+        '<span class="account-name-text">' + accountName + '</span>' +
+        '<div class="account-actions">' +
+          '<button class="account-action account-action--phone" data-account-id="' + accountId + '" title="Call">' +
+            '<img src="assets/icons/phone.svg" alt="Call" width="16" height="16" />' +
+          '</button>' +
+          '<button class="account-action account-action--email" data-account-id="' + accountId + '" title="Email">' +
+            '<img src="assets/icons/email.svg" alt="Email" width="16" height="16" />' +
+          '</button>' +
+          '<button class="account-action account-action--media" data-account-id="' + accountId + '" title="Launch Media">' +
+            '<img src="assets/icons/media.svg" alt="Launch Media" width="16" height="16" />' +
+          '</button>' +
+        '</div>' +
+      '</span>' +
+    '</div>'
+  );
 }
 
 /**
