@@ -212,32 +212,35 @@ h1 {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
 }
 
 .account-actions {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-left: 12px;
 }
 
 .account-action {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   padding: 0;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
   cursor: pointer;
   color: #555;
 }
 
 .account-action:hover {
-  background: #f0f0f0;
+  background: #f0f4fa;
+  border-color: #1a6fc4;
+  color: #1a6fc4;
 }
 
 .account-action img {
