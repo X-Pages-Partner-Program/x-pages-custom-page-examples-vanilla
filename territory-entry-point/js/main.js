@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.8';
+  var VERSION = '1.0.9';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
   ds.queryRecord({
     object: 'account__v',
     fields: ['id', 'name__v', 'object_type__v'],
-    where: [{ fieldName: 'id', operator: 'EQUALS', value: 'V4T000000001010' }],
+    where: "id = 'V4T000000001010'",
     limit: 5
   })
   .then(function (response) {
