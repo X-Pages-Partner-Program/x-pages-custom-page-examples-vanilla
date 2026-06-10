@@ -14,7 +14,7 @@ The Territory entry point is **not fully documented** in the official X-Pages do
 - `getAlignedTerritories({ includeChildren: true })` — fires with `includeChildren: true`; appends child territories to the same section under a "With children" group label
 - `getObjectMetadata({ object: 'territory__v' })` — fetches metadata for `territory__v`; renders success/error row, full response in console
 - `getObjectMetadata({ object: 'account__v' })` — fetches metadata for `account__v` to inspect field and picklist details; renders success/error row, full response in console
-- `queryRecord` on `account__v` — HCP List: first 5 accounts filtered by `object_type__v = 'professional__v'`. Each account renders as a clickable row with phone and email action buttons (phone/email are stubs, wired up later)
+- `queryRecord` on `account__v` — HCP List: first 5 accounts filtered by `object_type__v = 'professional__v'`. Each account renders as a clickable row with phone, email, and media action buttons (phone/email are stubs; media calls `ds.launchMediaForAccount` as a stub, wired up properly once presentation IDs are available)
 - `queryRecord` on `call2__v` — Recent Calls: first 5 in the territory, sorted by date descending. Each row is clickable and navigates to the call record via `ds.viewRecord`
 
 ## Important
@@ -30,6 +30,7 @@ territory-entry-point/
   js/main.js                  # Data calls and rendering logic
   assets/icons/phone.svg      # Phone icon for account action button
   assets/icons/email.svg      # Email icon for account action button
+  assets/icons/media.svg      # Media/play icon for account action button
   lib/q.js                    # Q promise library (unmodified)
   lib/X-PagesLibrary.js       # X-Pages JS Library (unmodified)
 ```

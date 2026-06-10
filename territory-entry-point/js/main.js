@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.10';
+  var VERSION = '1.0.11';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -309,6 +309,21 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
+    // Media button — stub, wired up later.
+    accountsEl.querySelectorAll('.account-action--media').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] launchMediaForAccount stub — accountId:', accountId);
+        ds.launchMediaForAccount(accountId)
+          .then(function (response) {
+            console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
+          })
+          .catch(function (error) {
+            console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
+          });
+      });
+    });
+
   })
   .catch(function (error) {
     console.error('[Territory Entry Point] Error fetching accounts:', error);
@@ -366,6 +381,21 @@ document.addEventListener('DOMContentLoaded', function () {
       el.addEventListener('click', function () {
         var accountId = el.getAttribute('data-account-id');
         console.log('[Territory Entry Point] Email button clicked for account:', accountId);
+      });
+    });
+
+    // Media button — stub, wired up later.
+    accountsOpenEl.querySelectorAll('.account-action--media').forEach(function (el) {
+      el.addEventListener('click', function () {
+        var accountId = el.getAttribute('data-account-id');
+        console.log('[Territory Entry Point] launchMediaForAccount stub — accountId:', accountId);
+        ds.launchMediaForAccount(accountId)
+          .then(function (response) {
+            console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
+          })
+          .catch(function (error) {
+            console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
+          });
       });
     });
 
@@ -465,6 +495,9 @@ function renderAccountRow(account) {
         '</button>' +
         '<button class="account-action account-action--email" data-account-id="' + id + '" title="Email">' +
           '<img src="assets/icons/email.svg" alt="Email" width="16" height="16" />' +
+        '</button>' +
+        '<button class="account-action account-action--media" data-account-id="' + id + '" title="Launch Media">' +
+          '<img src="assets/icons/media.svg" alt="Launch Media" width="16" height="16" />' +
         '</button>' +
       '</div>' +
     '</div>'
