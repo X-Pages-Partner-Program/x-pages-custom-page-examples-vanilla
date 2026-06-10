@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.8';
+  var VERSION = '1.0.7';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // HCP List — first 5 Professional accounts (object_type__v = 'professional__v')
   console.log('[Territory Entry Point] Firing: queryRecord account__v (limit 5)');
   ds.queryRecord({
-    object: 'Account',
+    object: 'account__v',
     fields: ['id', 'name__v', 'object_type__v'],
     where: "object_type__v = 'professional__v'",
     limit: 5
