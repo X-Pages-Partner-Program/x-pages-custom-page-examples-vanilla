@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.11';
+  var VERSION = '1.1.0';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -121,7 +121,17 @@ document.addEventListener('DOMContentLoaded', function () {
     var mediaBtn = resultsEl.querySelector('.account-action--media');
 
     phoneBtn.addEventListener('click', function () {
-      console.log('[Account Entry Point] Phone button clicked for account:', accountId);
+      console.log('[Account Entry Point] Firing: newRecord call2__v for account:', accountId);
+      ds.newRecord({
+        object: 'call2__v',
+        fields: { account__v: accountId }
+      })
+      .then(function (response) {
+        console.log('[Account Entry Point] newRecord call2__v resolved:', response);
+      })
+      .catch(function (error) {
+        console.log('[Account Entry Point] newRecord call2__v rejected:', error);
+      });
     });
 
     emailBtn.addEventListener('click', function () {
