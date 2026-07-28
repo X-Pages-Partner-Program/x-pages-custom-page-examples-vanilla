@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.2';
+  var VERSION = '1.1.3';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -115,44 +115,39 @@ document.addEventListener('DOMContentLoaded', function () {
       renderAccountNameRow(accountName, accountId)            +
       renderRow('Current User', userName);
 
-    // Attach click handlers to the account name action buttons
-    var phoneBtn = resultsEl.querySelector('.account-action--phone');
-    var emailBtn = resultsEl.querySelector('.account-action--email');
-    var mediaBtn = resultsEl.querySelector('.account-action--media');
-
-    // DIAGNOSTIC — temporary, remove once click issue is resolved
+    // Action buttons — delegated listener on resultsEl to survive innerHTML +=
+    // rewrites from getAvailableObjects and getObjectMetadata, which would
+    // otherwise detach listeners added directly to child elements.
     resultsEl.addEventListener('click', function (e) {
-      console.log('[Account Entry Point] DIAGNOSTIC — click on resultsEl, target:', e.target, 'classList:', e.target.className);
-    });
+      var btn = e.target.closest('button.account-action');
+      if (!btn) return;
 
-    phoneBtn.addEventListener('click', function (e) {
-      console.log('[Account Entry Point] DIAGNOSTIC — phoneBtn handler reached, e.target:', e.target);
-      console.log('[Account Entry Point] Firing: newRecord call2__v for account:', accountId);
-      ds.newRecord({
-        object: 'call2__v',
-        fields: { account__v: accountId }
-      })
-      .then(function (response) {
-        console.log('[Account Entry Point] newRecord call2__v resolved:', response);
-      })
-      .catch(function (error) {
-        console.log('[Account Entry Point] newRecord call2__v rejected:', error);
-      });
-    });
-
-    emailBtn.addEventListener('click', function () {
-      console.log('[Account Entry Point] Email button clicked for account:', accountId);
-    });
-
-    mediaBtn.addEventListener('click', function () {
-      console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId);
-      ds.launchMediaForAccount(accountId)
+      if (btn.classList.contains('account-action--phone')) {
+        console.log('[Account Entry Point] Firing: newRecord call2__v for account:', accountId);
+        ds.newRecord({
+          object: 'call2__v',
+          fields: { account__v: accountId }
+        })
         .then(function (response) {
-          console.log('[Account Entry Point] launchMediaForAccount resolved:', response);
+          console.log('[Account Entry Point] newRecord call2__v resolved:', response);
         })
         .catch(function (error) {
-          console.log('[Account Entry Point] launchMediaForAccount rejected:', error);
+          console.log('[Account Entry Point] newRecord call2__v rejected:', error);
         });
+
+      } else if (btn.classList.contains('account-action--email')) {
+        console.log('[Account Entry Point] Email button clicked for account:', accountId);
+
+      } else if (btn.classList.contains('account-action--media')) {
+        console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId);
+        ds.launchMediaForAccount(accountId)
+          .then(function (response) {
+            console.log('[Account Entry Point] launchMediaForAccount resolved:', response);
+          })
+          .catch(function (error) {
+            console.log('[Account Entry Point] launchMediaForAccount rejected:', error);
+          });
+      }
     });
 
     // Step 2: Query recent calls for this account, sorted by date descending.
