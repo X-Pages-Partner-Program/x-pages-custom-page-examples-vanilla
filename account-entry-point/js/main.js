@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.0';
+  var VERSION = '1.1.1';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -120,7 +120,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var emailBtn = resultsEl.querySelector('.account-action--email');
     var mediaBtn = resultsEl.querySelector('.account-action--media');
 
-    phoneBtn.addEventListener('click', function () {
+    // DIAGNOSTIC — temporary, remove once click issue is resolved
+    resultsEl.addEventListener('click', function (e) {
+      console.log('[Account Entry Point] DIAGNOSTIC — click on resultsEl, target:', e.target, 'classList:', e.target.className);
+    });
+
+    phoneBtn.addEventListener('click', function (e) {
+      console.log('[Account Entry Point] DIAGNOSTIC — phoneBtn handler reached, e.target:', e.target);
       console.log('[Account Entry Point] Firing: newRecord call2__v for account:', accountId);
       ds.newRecord({
         object: 'call2__v',
