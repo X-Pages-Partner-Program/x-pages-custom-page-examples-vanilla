@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.0';
+  var VERSION = '1.1.1';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -330,8 +330,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
       } else if (btn.classList.contains('account-action--media')) {
-        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001', 'NVA_UK_0001.zip');
-        ds.launchMediaForAccount(accountId, 'V6M000000001001', 'NVA_UK_0001.zip')
+        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'Natevba_main', 'NVA_UK_0001.zip');
+        ds.launchMediaForAccount(accountId, 'Natevba_main', 'NVA_UK_0001.zip')
         .then(function (response) {
           console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
         })
@@ -424,8 +424,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
       } else if (btn.classList.contains('account-action--media')) {
-        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001', 'NVA_UK_0001.zip');
-        ds.launchMediaForAccount(accountId, 'V6M000000001001', 'NVA_UK_0001.zip')
+        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'Natevba_main', 'NVA_UK_0001.zip');
+        ds.launchMediaForAccount(accountId, 'Natevba_main', 'NVA_UK_0001.zip')
         .then(function (response) {
           console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
         })
