@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.0.11';
+  var VERSION = '1.1.0';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -293,35 +293,52 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    // Phone button — stub, wired up later.
-    accountsEl.querySelectorAll('.account-action--phone').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] Phone button clicked for account:', accountId);
-      });
-    });
+    // Action buttons — delegated listener on accountsEl.
+    // Using delegation rather than per-button listeners because innerHTML rewrites
+    // (e.g. from a refresh or state update) would silently detach direct listeners.
+    // With delegation, one listener on the stable container handles all rows.
+    // pointer-events: none on the img icons in CSS ensures the button is always e.target.
+    accountsEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('button.account-action');
+      if (!btn) return;
+      var accountId = btn.getAttribute('data-account-id');
 
-    // Email button — stub, wired up later.
-    accountsEl.querySelectorAll('.account-action--email').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] Email button clicked for account:', accountId);
-      });
-    });
+      if (btn.classList.contains('account-action--phone')) {
+        console.log('[Territory Entry Point] Firing: newRecord call2__v for account:', accountId);
+        ds.newRecord({
+          object: 'call2__v',
+          fields: { account__v: accountId }
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] newRecord call2__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] newRecord call2__v rejected:', error);
+        });
 
-    // Media button — stub, wired up later.
-    accountsEl.querySelectorAll('.account-action--media').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] launchMediaForAccount stub — accountId:', accountId);
-        ds.launchMediaForAccount(accountId)
-          .then(function (response) {
-            console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
-          })
-          .catch(function (error) {
-            console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
-          });
-      });
+      } else if (btn.classList.contains('account-action--email')) {
+        console.log('[Territory Entry Point] Firing: newRecord sent_email__v for account:', accountId);
+        ds.newRecord({
+          object: 'sent_email__v',
+          fields: { account__v: accountId }
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] newRecord sent_email__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] newRecord sent_email__v rejected:', error);
+        });
+
+      } else if (btn.classList.contains('account-action--media')) {
+        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001', 'NVA_UK_0001.zip');
+        ds.launchMediaForAccount(accountId, 'V6M000000001001', 'NVA_UK_0001.zip')
+        .then(function (response) {
+          console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
+        });
+      }
     });
 
   })
@@ -370,33 +387,52 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
 
-    accountsOpenEl.querySelectorAll('.account-action--phone').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] Phone button clicked for account:', accountId);
-      });
-    });
+    // Action buttons — delegated listener on accountsOpenEl.
+    // Using delegation rather than per-button listeners because innerHTML rewrites
+    // (e.g. from a refresh or state update) would silently detach direct listeners.
+    // With delegation, one listener on the stable container handles all rows.
+    // pointer-events: none on the img icons in CSS ensures the button is always e.target.
+    accountsOpenEl.addEventListener('click', function (e) {
+      var btn = e.target.closest('button.account-action');
+      if (!btn) return;
+      var accountId = btn.getAttribute('data-account-id');
 
-    accountsOpenEl.querySelectorAll('.account-action--email').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] Email button clicked for account:', accountId);
-      });
-    });
+      if (btn.classList.contains('account-action--phone')) {
+        console.log('[Territory Entry Point] Firing: newRecord call2__v for account:', accountId);
+        ds.newRecord({
+          object: 'call2__v',
+          fields: { account__v: accountId }
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] newRecord call2__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] newRecord call2__v rejected:', error);
+        });
 
-    // Media button — stub, wired up later.
-    accountsOpenEl.querySelectorAll('.account-action--media').forEach(function (el) {
-      el.addEventListener('click', function () {
-        var accountId = el.getAttribute('data-account-id');
-        console.log('[Territory Entry Point] launchMediaForAccount stub — accountId:', accountId);
-        ds.launchMediaForAccount(accountId)
-          .then(function (response) {
-            console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
-          })
-          .catch(function (error) {
-            console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
-          });
-      });
+      } else if (btn.classList.contains('account-action--email')) {
+        console.log('[Territory Entry Point] Firing: newRecord sent_email__v for account:', accountId);
+        ds.newRecord({
+          object: 'sent_email__v',
+          fields: { account__v: accountId }
+        })
+        .then(function (response) {
+          console.log('[Territory Entry Point] newRecord sent_email__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] newRecord sent_email__v rejected:', error);
+        });
+
+      } else if (btn.classList.contains('account-action--media')) {
+        console.log('[Territory Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001', 'NVA_UK_0001.zip');
+        ds.launchMediaForAccount(accountId, 'V6M000000001001', 'NVA_UK_0001.zip')
+        .then(function (response) {
+          console.log('[Territory Entry Point] launchMediaForAccount resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
+        });
+      }
     });
 
   })

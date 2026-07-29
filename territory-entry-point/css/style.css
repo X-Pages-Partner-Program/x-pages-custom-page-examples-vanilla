@@ -217,6 +217,10 @@ h1 {
   color: #1a6fc4;
 }
 
+.account-action img {
+  pointer-events: none;
+}
+
 .no-results {
   color: #888;
   font-style: italic;
