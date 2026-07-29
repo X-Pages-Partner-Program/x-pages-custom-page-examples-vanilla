@@ -136,7 +136,17 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
       } else if (btn.classList.contains('account-action--email')) {
-        console.log('[Account Entry Point] Email button clicked for account:', accountId);
+        console.log('[Account Entry Point] Firing: newRecord sent_email__v for account:', accountId);
+        ds.newRecord({
+          object: 'sent_email__v',
+          fields: { account__v: accountId }
+        })
+        .then(function (response) {
+          console.log('[Account Entry Point] newRecord sent_email__v resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Account Entry Point] newRecord sent_email__v rejected:', error);
+        });
 
       } else if (btn.classList.contains('account-action--media')) {
         console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId);
