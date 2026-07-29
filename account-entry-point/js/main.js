@@ -149,8 +149,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
       } else if (btn.classList.contains('account-action--media')) {
-        console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001');
-        ds.launchMediaForAccount(accountId, 'V6M000000001001')
+        console.log('[Account Entry Point] Firing: launchMediaForAccount', accountId, 'V6M000000001001', 'NVA_UK_0001.zip');
+        ds.launchMediaForAccount(accountId, 'V6M000000001001', 'NVA_UK_0001.zip')
           .then(function (response) {
             console.log('[Account Entry Point] launchMediaForAccount resolved:', response);
           })
