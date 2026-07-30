@@ -23,7 +23,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '2.0.0';
+  var VERSION = '2.1.0';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -149,6 +149,25 @@ function handleHomeContext(contentEl) {
  * Shared by both account and home context branches.
  */
 function handleActionClick(e, prefix) {
+  // Account name tap — navigate to account record
+  var nameEl = e.target.closest('.account-name-link');
+  if (nameEl) {
+    var accountId = nameEl.getAttribute('data-account-id');
+    console.log('[Prompt Overlay] Firing: viewRecord account__v', accountId);
+    ds.viewRecord({
+      object: 'account__v',
+      fields: { id: accountId },
+      target: [{ id: 'V8P000000008001' }]
+    })
+    .then(function (response) {
+      console.log('[Prompt Overlay] viewRecord resolved:', response);
+    })
+    .catch(function (error) {
+      console.log('[Prompt Overlay] viewRecord rejected:', error);
+    });
+    return;
+  }
+
   var btn = e.target.closest('button.account-action');
   if (!btn) return;
   var accountId = btn.getAttribute('data-account-id');
@@ -273,7 +292,7 @@ function renderAccountRow(account) {
   var name = account.name__v  || '—';
   return (
     '<div class="account-row">' +
-      '<span class="account-name account-name-link" data-account-id="' + id + '">' + name + '</span>' +
+      '<span class="account-name account-name-link" data-account-id="' + id + '" role="button" tabindex="0">' + name + '</span>' +
       '<div class="account-actions">' +
         '<button class="account-action account-action--phone" data-account-id="' + id + '" title="Call">' +
           '<img src="assets/icons/phone.svg" alt="Call" width="16" height="16" />' +

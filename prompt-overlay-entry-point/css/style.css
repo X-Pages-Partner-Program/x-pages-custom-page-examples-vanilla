@@ -214,5 +214,12 @@ h1 {
   margin: 0;
 }
 
+.account-name-link {
+  cursor: pointer;
+  color: #1a6fc4;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* sendToMySchedule is iPad only — hide the button on all other platforms */
 body:not(.platform-ipad) .account-action--schedule { display: none; }
