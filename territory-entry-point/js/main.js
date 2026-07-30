@@ -25,13 +25,19 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.1';
+  var VERSION = '1.1.2';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
   document.body.appendChild(versionEl);
 
   console.log('[Territory Entry Point] DOMContentLoaded fired');
+
+  // Platform detection — set body class for CSS-driven feature visibility.
+  // sendToMySchedule is iPad only; body:not(.platform-ipad) hides the button on other platforms.
+  if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.myInsightsAPI) {
+    document.body.classList.add('platform-ipad');
+  }
 
   var resultsEl      = document.getElementById('results');
   var territoriesEl  = document.getElementById('territories');
@@ -338,6 +344,16 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(function (error) {
           console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
         });
+
+      } else if (btn.classList.contains('account-action--schedule')) {
+        console.log('[Territory Entry Point] Firing: sendToMySchedule for account:', accountId);
+        ds.sendToMySchedule({ accountIds: [accountId] })
+        .then(function (response) {
+          console.log('[Territory Entry Point] sendToMySchedule resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] sendToMySchedule rejected:', error);
+        });
       }
     });
 
@@ -431,6 +447,16 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(function (error) {
           console.log('[Territory Entry Point] launchMediaForAccount rejected:', error);
+        });
+
+      } else if (btn.classList.contains('account-action--schedule')) {
+        console.log('[Territory Entry Point] Firing: sendToMySchedule for account:', accountId);
+        ds.sendToMySchedule({ accountIds: [accountId] })
+        .then(function (response) {
+          console.log('[Territory Entry Point] sendToMySchedule resolved:', response);
+        })
+        .catch(function (error) {
+          console.log('[Territory Entry Point] sendToMySchedule rejected:', error);
         });
       }
     });
@@ -534,6 +560,9 @@ function renderAccountRow(account) {
         '</button>' +
         '<button class="account-action account-action--media" data-account-id="' + id + '" title="Launch Media">' +
           '<img src="assets/icons/media.svg" alt="Launch Media" width="16" height="16" />' +
+        '</button>' +
+        '<button class="account-action account-action--schedule" data-account-id="' + id + '" title="Send to My Schedule">' +
+          '<img src="assets/icons/schedule.svg" alt="Send to My Schedule" width="16" height="16" />' +
         '</button>' +
       '</div>' +
     '</div>'

@@ -280,3 +280,6 @@ h1 {
   font-size: 11px;
   color: #aaa;
 }
+
+/* sendToMySchedule is iPad only — hide the button on all other platforms */
+body:not(.platform-ipad) .account-action--schedule { display: none; }
