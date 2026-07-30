@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.5';
+  var VERSION = '1.1.6';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -156,6 +156,16 @@ document.addEventListener('DOMContentLoaded', function () {
           })
           .catch(function (error) {
             console.log('[Account Entry Point] launchMediaForAccount rejected:', error);
+          });
+
+      } else if (btn.classList.contains('account-action--schedule')) {
+        console.log('[Account Entry Point] Firing: sendToMySchedule for account:', accountId);
+        ds.sendToMySchedule({ accountIds: [accountId] })
+          .then(function (response) {
+            console.log('[Account Entry Point] sendToMySchedule resolved:', response);
+          })
+          .catch(function (error) {
+            console.log('[Account Entry Point] sendToMySchedule rejected:', error);
           });
       }
     });
@@ -302,6 +312,9 @@ function renderAccountNameRow(accountName, accountId) {
           '</button>' +
           '<button class="account-action account-action--media" data-account-id="' + accountId + '" title="Launch Media">' +
             '<img src="assets/icons/media.svg" alt="Launch Media" width="16" height="16" />' +
+          '</button>' +
+          '<button class="account-action account-action--schedule" data-account-id="' + accountId + '" title="Send to My Schedule">' +
+            '<img src="assets/icons/schedule.svg" alt="Send to My Schedule" width="16" height="16" />' +
           '</button>' +
         '</div>' +
       '</span>' +
