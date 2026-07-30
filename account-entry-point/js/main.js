@@ -26,7 +26,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.6';
+  var VERSION = '1.1.7';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
@@ -277,6 +277,7 @@ function renderPlatformBadge() {
   if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.myInsightsAPI) {
     platform = 'iPad';
     modifier = 'platform-badge--ipad';
+    document.body.classList.add('platform-ipad');
   } else if (typeof window.external !== 'undefined' && 'notify' in window.external) {
     platform = 'Windows';
     modifier = 'platform-badge--windows';

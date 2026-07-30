@@ -257,3 +257,6 @@ h1 {
   padding: 12px 16px;
   margin: 0;
 }
+
+/* sendToMySchedule is iPad only — hide the button on all other platforms */
+body:not(.platform-ipad) .account-action--schedule { display: none; }
