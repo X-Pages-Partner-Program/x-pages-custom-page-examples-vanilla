@@ -1,5 +1,5 @@
 /*
- *  Veeva X-Pages Library version 261.0.30
+ *  Veeva X-Pages Library version 261.4.10
  *
  *  http://developer.veevacrm.com/
  *
@@ -663,6 +663,10 @@
 
         olAPI.viewRecord = function(configObject) {
             return initiateAction('viewRecord', configObject);
+        };
+
+        olAPI.editRecord = function(configObject) {
+            return initiateAction('editRecord', configObject);
         };
 
         olAPI.smartLinking = function(configObject) {
@@ -1749,6 +1753,18 @@
 
             return deferred.promise;
 
+        };
+
+        ds.editRecord = function(config) {
+            var deferred = Q.defer();
+
+            if (config && config.object && config.fields?.id) {
+                return ds.doPostMessage({command: 'editRecord', configObject: config});
+            } else {
+                deferred.reject(createErrorResponse(errorCode.NO_PARAMETER, 'editRecord called with invalid configuration: ' + JSON.stringify(config)));
+            }
+
+            return deferred.promise;
         };
 
         function validTargetsField(targets, fields) {

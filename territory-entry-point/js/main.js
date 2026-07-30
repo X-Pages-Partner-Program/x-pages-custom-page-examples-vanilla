@@ -25,7 +25,7 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  var VERSION = '1.1.2';
+  var VERSION = '1.1.3';
   var versionEl = document.createElement('div');
   versionEl.className = 'version-stamp';
   versionEl.textContent = 'v' + VERSION;
