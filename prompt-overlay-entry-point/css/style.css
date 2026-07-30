@@ -37,9 +37,16 @@ h1 {
   margin: 0;
 }
 
-/* Section containers */
-#overlay-context,
-#current-object {
+/* Section heading */
+.section-heading {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: #333;
+}
+
+/* Content panel — wraps data rows */
+.content-panel {
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -47,12 +54,13 @@ h1 {
   max-width: 600px;
 }
 
-/* Section heading */
-.section-heading {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 28px 0 12px;
-  color: #333;
+/* Accounts list — home context */
+#accounts-list {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  max-width: 600px;
 }
 
 /* Data rows */
@@ -87,7 +95,96 @@ h1 {
   word-break: break-all;
 }
 
-/* Raw response — pre-formatted JSON output for unknown response shapes */
+/* Platform badge — fixed top-right pill */
+.platform-badge {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.platform-badge--ipad    { background: #1a6fc4; }
+.platform-badge--windows { background: #2d7d46; }
+.platform-badge--browser { background: #888; }
+
+/* Version stamp — fixed bottom-left */
+.version-stamp {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #bbb;
+  letter-spacing: 0.05em;
+}
+
+/* Account name row — name text and action buttons inline */
+.account-name-with-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Account list rows — home context */
+.account-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.account-row:first-child { padding-top: 0; }
+.account-row:last-child  { border-bottom: none; padding-bottom: 0; }
+
+.account-name {
+  font-size: 14px;
+  color: #222;
+  flex: 1;
+}
+
+/* Action button group */
+.account-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+}
+
+.account-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  color: #555;
+}
+
+.account-action:hover {
+  background: #f0f4fa;
+  border-color: #1a6fc4;
+  color: #1a6fc4;
+}
+
+.account-action img {
+  display: block;
+  pointer-events: none;
+}
+
+/* Raw response — pre-formatted JSON output for unknown context values */
 .raw-response {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
   font-size: 11px;
@@ -101,17 +198,6 @@ h1 {
   color: #333;
 }
 
-/* Version stamp — fixed bottom-left, incremented manually on each deploy */
-.version-stamp {
-  position: fixed;
-  bottom: 16px;
-  left: 16px;
-  font-size: 10px;
-  font-weight: 600;
-  color: #bbb;
-  letter-spacing: 0.05em;
-}
-
 /* Error state */
 .error {
   color: #c0392b;
@@ -121,3 +207,12 @@ h1 {
   padding: 12px 16px;
   margin: 0;
 }
+
+.no-results {
+  color: #888;
+  font-style: italic;
+  margin: 0;
+}
+
+/* sendToMySchedule is iPad only — hide the button on all other platforms */
+body:not(.platform-ipad) .account-action--schedule { display: none; }
